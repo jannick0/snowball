@@ -7,16 +7,6 @@ matrix:
       #env: c_tests=y
 
 before_install:
-  # Try to check out a branch of the same name from the snowball-data repo
-  # sibling of this snowball repo, so that PRs requiring changes to both can be
-  # CI tested easily.
-  #
-  # If that fails, just use the standard snowball-data repo's default branch.
-  - GH_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-  - GH_REPO_SLUG=${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}
-  - GH_REPO_URL=https://github.com/${GH_REPO_SLUG%%/*}/snowball-data.git
-  - echo "Trying branch $GH_BRANCH from $GH_REPO_URL"
-  - git clone --depth=1 -b "$GH_BRANCH" "$GH_REPO_URL" || git clone --depth=1 https://github.com/snowballstem/snowball-data.git
   - >
     if test x$TRAVIS_OS_NAME = xwindows; then
       test -f C:/tools/msys64/msys2_shell.cmd && rm -rf C:/tools/msys64
