@@ -16,6 +16,7 @@ before_install:
   - choco uninstall -y mingw
   - choco upgrade --no-progress -y msys2
   - echo $PATH
+  - env
   - export msys2='cmd //C RefreshEnv.cmd '
   - export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
   - export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
@@ -45,7 +46,7 @@ script:
   - test -z "$FPC"     || $MAKE check_pascal STEMMING_DATA=snowball-data
 
 before_cache:
-  - test x$TRAVIS_OS_NAME = xwindows && $msys2 pacman --sync --clean --noconfirm
+  - test x$TRAVIS_OS_NAME != xwindows || $msys2 paccache -rk0
 
 cache:
   directories:
