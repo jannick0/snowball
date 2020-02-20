@@ -10,7 +10,11 @@ before_install:
   - choco uninstall -y mingw
   - choco upgrade --no-progress -y msys2
   - echo $PATH
-  - export msys2='cmd //C RefreshEnv.cmd & C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -msys2 -c "\"\$@"\" --"
+  - export msys2='cmd //C RefreshEnv.cmd '
+  - export msys2+='& set MSYS=winsymlinks:nativestrict '
+  - export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
+  - export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
+  - export msys2+=" -msys2 -c "\"\$@"\" --"
   - $msys2 pacman --sync --noconfirm --needed base base-devel msys2-devel
   - $msys2 pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
   - $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
