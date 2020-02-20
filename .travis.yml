@@ -30,10 +30,10 @@ before_install:
   - export OS=Windows_NT
   - export MAKE=mingw32-make
   - export c_tests=y
-  - export PYTHON="python3 THIN_FACTOR=10"
-  - export RUST=rust
-  - export GO=go
-  - export NODE=nodejs
+#  - export PYTHON="python3 THIN_FACTOR=10"
+#  - export RUST=rust
+#  - export GO=go
+#  - export NODE=nodejs
   - $MAKE --version
   - gcc --version
 
