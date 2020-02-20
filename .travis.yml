@@ -15,17 +15,17 @@ before_install:
   - export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
   - export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
   - export msys2+=" -msys2 -c "\"\$@"\" --"
-  - $msys2 pacman --sync --noconfirm --needed base base-devel msys2-devel
-  - $msys2 pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
-  - $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
-  - taskkill //IM gpg-agent.exe //F || true # https://travis-ci.community/t/4967
   - export PATH=/c/tools/msys64/mingw64/bin:/c/tools/msys64/usr/bin:$PATH
+  - pacman --sync --noconfirm --needed base base-devel msys2-devel
+  - pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
+  - pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
+  - tasklist | grep -q gpg-agent && taskkill //IM gpg-agent.exe //F # https://travis-ci.community/t/4967
   - export MAKE=mingw32-make
   - $MAKE --version
   - gcc --version
 
 install:
-  - export MAKEFLAGS="-j $(nproc)"
+  - test x$NUMBER_OF_PROCESSORS = x || export MAKEFLAGS="-j $NUMBER_OF_PROCESSORS"
 
 script:
   - $MAKE CC="${CC:-gcc}$cc_append"
