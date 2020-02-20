@@ -10,7 +10,7 @@ before_install:
   - choco uninstall -y mingw
   - choco upgrade --no-progress -y msys2
   - echo $PATH
-  - export msys2='cmd //C SET MSYSTEM=MSYS & CHERE_INVOKING=1 & C:\\tools\\msys64\\usr\\bash -li -c "\$@"'
+  - export msys2='cmd //C SET MSYSTEM=MSYS& SET CHERE_INVOKING=1& C:\\tools\\msys64\\usr\\bash -li -c "\$@"'
   - $msys2 pacman --sync --noconfirm --needed base base-devel msys2-devel
   - $msys2 pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
   - $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
