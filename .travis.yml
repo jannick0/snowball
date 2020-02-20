@@ -6,19 +6,30 @@ os:
 - windows
 
 before_install:
+  # Try to check out a branch of the same name from the snowball-data repo
+  # sibling of this snowball repo, so that PRs requiring changes to both can be
+  # CI tested easily.
+  #
+  # If that fails, just use the standard snowball-data repo's default branch.
+  - GH_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+  - GH_REPO_SLUG=${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}
+  - GH_REPO_URL=https://github.com/${GH_REPO_SLUG%%/*}/snowball-data.git
+  - echo "Trying branch $GH_BRANCH from $GH_REPO_URL"
+  - git clone --depth=1 -b "$GH_BRANCH" "$GH_REPO_URL" || git clone --depth=1 https://github.com/snowballstem/snowball-data.git
   - test -f C:/tools/msys64/msys2_shell.cmd && echo "msys2_shell.cmd found" || rm -rf C:/tools/msys64
   - choco uninstall -y mingw
   - choco upgrade --no-progress -y msys2
   - echo $PATH
   - export msys2='cmd //C RefreshEnv.cmd '
-  - export msys2+='& set MSYS=winsymlinks:nativestrict '
+  #- export msys2+='& set MSYS=winsymlinks:nativestrict '
   - export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
   - export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
   - export msys2+=" -msys2 -c "\"\$@"\" --"
   - export PATH=/c/tools/msys64/mingw64/bin:/c/tools/msys64/usr/bin:$PATH
-  - pacman --sync --noconfirm --needed base base-devel msys2-devel
-  - pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
-  - pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
+  - which pacman || true
+  - $msys2 pacman --sync --noconfirm --needed base base-devel msys2-devel
+  #- $msys2 pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
+  - $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
   - tasklist | grep -q gpg-agent && taskkill //IM gpg-agent.exe //F # https://travis-ci.community/t/4967
   - export MAKE=mingw32-make
   - $MAKE --version
@@ -39,7 +50,9 @@ script:
   - test -z "$GO"      || $MAKE check_go     STEMMING_DATA=snowball-data
   - test -z "$FPC"     || $MAKE check_pascal STEMMING_DATA=snowball-data
 
+before_cache:
+  - test x$TRAVIS_OS_NAME = xwindows && $msys2 pacman --sync --clean --noconfirm
+
 cache:
   directories:
-  - $HOME/AppData/Local/Temp/chocolatey
   - /C/tools/msys64
