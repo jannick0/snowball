@@ -15,7 +15,7 @@ before_install:
   - test -f /C/tools/msys64/msys2_shell.cmd && echo "msys2_shell.cmd found" || rm -rf C:/tools/msys64
   - choco list --local-only
   - choco uninstall -y mingw
-  - choco upgrade --no-progress -y msys2
+  - choco upgrade --no-progress -y nodejs msys2
   - echo $PATH
   - env
   - export msys2='cmd //C RefreshEnv.cmd '
@@ -24,10 +24,16 @@ before_install:
   - export msys2+=" -msys2 -c "\"\$@"\" --"
   - $msys2 pacman --sync --noconfirm --needed base base-devel msys2-devel
   #- $msys2 pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
-  - $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
+  - $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make mingw-w64-x86_64-rust mingw-w64-x86_64-go
   - tasklist | grep -qv gpg-agent || taskkill //IM gpg-agent.exe //F # https://travis-ci.community/t/4967
   - export PATH=/c/tools/msys64:/c/tools/msys64/mingw64/bin:/c/tools/msys64/usr/bin:$PATH
+  - export OS=Windows_NT
   - export MAKE=mingw32-make
+  - export c_tests=y
+  - export PYTHON="python3 THIN_FACTOR=10"
+  - export RUST=rust
+  - export GO=go
+  - export NODE=nodejs
   - $MAKE --version
   - gcc --version
 
@@ -47,7 +53,7 @@ script:
   - test -z "$FPC"     || $MAKE check_pascal STEMMING_DATA=snowball-data
 
 before_cache:
-  - test x$TRAVIS_OS_NAME != xwindows || $msys2 paccache -rk0
+  - case $TRAVIS_OS_NAME in (windows) $msys2 paccache -rk0;; esac
 
 cache:
   directories:
