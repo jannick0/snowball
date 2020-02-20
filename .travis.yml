@@ -11,11 +11,7 @@ before_install:
   # CI tested easily.
   #
   # If that fails, just use the standard snowball-data repo's default branch.
-  - GH_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-  - GH_REPO_SLUG=${TRAVIS_PULL_REQUEST_SLUG:-$TRAVIS_REPO_SLUG}
-  - GH_REPO_URL=https://github.com/${GH_REPO_SLUG%%/*}/snowball-data.git
-  - echo "Trying branch $GH_BRANCH from $GH_REPO_URL"
-  - git clone --depth=1 -b "$GH_BRANCH" "$GH_REPO_URL" || git clone --depth=1 https://github.com/snowballstem/snowball-data.git
+  - git clone --depth=1 https://github.com/snowballstem/snowball-data.git
   - test -f C:/tools/msys64/msys2_shell.cmd && echo "msys2_shell.cmd found" || rm -rf C:/tools/msys64
   - choco uninstall -y mingw
   - choco upgrade --no-progress -y msys2
