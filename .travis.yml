@@ -10,12 +10,10 @@ before_install:
   - choco uninstall -y mingw
   - choco upgrade --no-progress -y msys2
   - echo $PATH
-  - export PATH=/c/tools/msys64/mingw64/bin:/c/tools/msys64/usr/bin:$PATH
-  - echo PATH
-  - echo $PATH
-  - pacman --sync --noconfirm --needed base base-devel msys2-devel
-  - pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
-  - pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
+  - export msys2='cmd //C SET MSYSTEM=MSYS & CHERE_INVOKING=1 & C:\\tools\\msys64\\usr\\bash -li -c "\$@"'
+  - $msys2 pacman --sync --noconfirm --needed base base-devel msys2-devel
+  - $msys2 pacman --sync --noconfirm --needed mingw-w64-i686-toolchain mingw-w64-i686-make
+  - $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-make
   - taskkill //IM gpg-agent.exe //F  # https://travis-ci.community/t/4967
   - export MAKE=mingw32-make
 
